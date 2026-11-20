@@ -24,19 +24,18 @@ ATOMIC TV Capture est une application Android TV destinée aux captures d'écran
 
 ## Installation
 
-1. Télécharger l'**APK Release signée** depuis l'onglet **Releases** du dépôt GitHub officiel, après sa première publication.
-2. Installer l'APK via la TV ou ADB :
+1. Télécharger l'**APK Release signée** depuis les [Releases officielles GitHub](https://github.com/ElecktroSkwiiZz/atomic-tv-capture/releases/latest).
+2. Installer l'APK via la TV ou ADB, depuis le dossier contenant `adb.exe` et l'APK :
 
    ```powershell
-   .\adb connect 192.168.1.17:5555
-   .\adb -s 192.168.1.17:5555 install -r "C:\Users\JB\Downloads\ATOMIC-TV-Capture-AndroidTV.apk"
+   # Remplace 192.168.X.X par l'adresse IP affichée dans les paramètres réseau de ta TV.
+   .\adb connect 192.168.X.X:5555
+   .\adb -s 192.168.X.X:5555 install -r ".\ATOMIC-TV-Capture-AndroidTV.apk"
    ```
 
 3. Sur la TV, ouvrir **Paramètres → Accessibilité**, puis activer **ATOMIC TV Capture — raccourcis télécommande**.
 4. Dans l'application, choisir la touche de capture ou la combinaison de touches, et relever l'URL ainsi que le PIN à quatre chiffres.
 5. Depuis le PC, ouvrir dans le navigateur l'adresse indiquée sur l'écran de la télévision.
-
-**Important :** les anciennes APK de test signées avec une clé *debug* peuvent nécessiter une désinstallation avant la première APK Release officielle. Exporter d'abord les captures : une désinstallation peut effacer les fichiers privés.
 
 ## Captures et limites
 
