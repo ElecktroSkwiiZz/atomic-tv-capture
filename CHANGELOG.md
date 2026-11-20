@@ -1,4 +1,15 @@
-# Historique — ATOMIC TV Capture
+# Historique des versions — ATOMIC TV Capture
+
+## 3.1.1 — Identité visuelle et protection des versions Release
+
+- Nouvelle icône de l'application inspirée de l'identité officielle JB Atomic Industries.
+- Nouvelle bannière Android TV compatible avec le lanceur Leanback.
+- Logo de l'éditeur dans l'interface Android TV et sur le tableau de bord PC.
+- Filigranes discrets dans les panneaux de l'interface PC, mentions d'éditeur dans les sources et la documentation.
+- Aucune incrustation dans les captures PNG ou MP4 de l'utilisateur.
+- Correction de compatibilité Java : `Intent.setClipData()` appelé séparément.
+- Protection du binaire Release par R8, politique de sécurité et avertissement sur les limites de l'obfuscation.
+- En-têtes CSP de protection du portail PC et favicon reprenant le logo officiel.
 
 ## 3.1.0 — 20 novembre 2026
 
@@ -17,4 +28,4 @@
 - Port configurable avec recherche automatique si occupé.
 - Vérification des mises à jour GitHub, contrôle de signature et installation après confirmation Android.
 
-**État du projet :** code source disponible ; l'APK Release doit encore être compilée et testée sur Android TV avant une annonce publique de stabilité.
+**Publication :** la v3.1.0 a été diffusée sur GitHub Releases ; les versions ultérieures restent soumises aux contrôles de compilation et de signature avant publication.

@@ -1,3 +1,7 @@
+/* ATOMIC TV Capture — JB ATOMIC INDUSTRIES — https://jbatomic.com/
+ * © 2026 JB Atomic Industries. Product branding and attribution.
+ * User screenshots and recordings remain unwatermarked.
+ */
 package com.jbatomic.tvcapture;
 
 import android.app.Activity;
@@ -19,6 +23,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -81,10 +86,19 @@ public class MainActivity extends Activity {
 
         LinearLayout top = horizontal();
         body.addView(top);
-        LinearLayout brand = vertical();
+        LinearLayout brand = horizontal();
+        brand.setGravity(Gravity.CENTER_VERTICAL);
         top.addView(brand, new LinearLayout.LayoutParams(0, -2, 1f));
-        label(brand, "▣   ATOMIC TV CAPTURE", 23, FG, true, 0);
-        label(brand, "JB ATOMIC INDUSTRIES   /   VERSION " + BuildConfig.VERSION_NAME, 11, MUTED, false, 1);
+        ImageView corporateLogo = new ImageView(this);
+        corporateLogo.setImageResource(R.drawable.jb_atomic_company);
+        corporateLogo.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        corporateLogo.setContentDescription("Logo JB Atomic Industries");
+        brand.addView(corporateLogo, new LinearLayout.LayoutParams(dp(164), dp(55)));
+        LinearLayout brandText = vertical();
+        brandText.setPadding(dp(12), 0, 0, 0);
+        brand.addView(brandText, new LinearLayout.LayoutParams(-2, -2));
+        label(brandText, "ATOMIC TV CAPTURE", 19, FG, true, 0);
+        label(brandText, "VERSION " + BuildConfig.VERSION_NAME + "  /  JB ATOMIC INDUSTRIES", 10, ACCENT, false, 0);
         TextView state = new TextView(this);
         state.setText(RemoteAccessibilityService.isConnected() ? "●  SERVICE ACTIF" : "●  SERVICE INACTIF");
         state.setTextSize(12);
@@ -162,8 +176,9 @@ public class MainActivity extends Activity {
             render();
         });
 
-        label(body, "© JB ATOMIC INDUSTRIES   ·   https://jbatomic.com/   ·   La capture HDMI et certaines applications protégées peuvent être bloquées.",
-            11, MUTED, false, 0);
+        // Corporate signature: visible in the TV UI, never burned into users' screenshots or recordings.
+        label(body, "© 2026 JB ATOMIC INDUSTRIES · https://jbatomic.com/ · ATOMIC TV Capture v" + BuildConfig.VERSION_NAME +
+            " · HDMI et contenus protégés : capture parfois impossible.", 11, MUTED, false, 0);
     }
 
     private LinearLayout panel(LinearLayout parent, boolean wide, String title) {

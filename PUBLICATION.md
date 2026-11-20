@@ -57,7 +57,7 @@ Le workflow contrôle automatiquement que le certificat ayant signé l'APK corre
 
 Le premier `git push` vers `main` lance **Actions → ATOMIC TV Capture - Build & Release APK** et produit une **APK DEBUG de test**, dans la section **Artifacts** de l'exécution.
 
-Cette APK de test n'est **pas** une Release officielle et n'utilise pas nécessairement la même signature. Ne la diffusez pas comme version stable ; les mises à jour depuis une version debug vers une Release peuvent échouer.
+La compilation `main` est réservée aux vérifications internes du projet. **Seules les APK Release officiellement signées et ajoutées à l’onglet Releases sont proposées au téléchargement public.**
 
 ## 4 — Publier la première APK Release officielle
 
@@ -76,7 +76,7 @@ Le tag **`v3.1.0`** déclenche automatiquement une autre exécution GitHub Actio
 4. contrôle le certificat et calcule le SHA-256 ;
 5. **crée la GitHub Release avec les fichiers** `ATOMIC-TV-Capture-AndroidTV.apk` et `.apk.sha256`.
 
-La Release est créée **après** la compilation, pour ne jamais afficher une version publique sans APK prête. Vérifier que le job est vert dans **Actions**, puis visiter **Releases** et contrôler la présence des deux fichiers. Si le job échoue, consulter les logs et **ne pas distribuer d'APK debug** à la place.
+La Release est créée **après** la compilation, pour ne jamais afficher une version publique sans APK prête. Vérifier que le job est vert dans **Actions**, puis visiter **Releases** et contrôler la présence des deux fichiers. Si le job échoue, consulter les logs avant toute nouvelle publication.
 
 ## 5 — Publier une mise à jour (exemple 3.1.1)
 
@@ -112,7 +112,6 @@ L'application vise par défaut le dépôt public **`ElecktroSkwiiZz/atomic-tv-ca
 
 Si vous changez de dépôt après publication, modifiez le dépôt configuré dans l'application déjà installée, ou publiez une version passerelle qui utilise la nouvelle adresse.
 
-**Migration depuis l'ancienne APK debug :** sauvegarder d'abord les captures depuis le navigateur ou ADB. Si la clé de signature est différente, Android refusera `install -r` : désinstaller l'ancienne version (les fichiers locaux peuvent disparaître), puis installer la première Release officielle. Les Releases suivantes se mettront à jour en place.
 
 ## 7 — Télécharger depuis le site JB Atomic Industries
 
@@ -133,3 +132,7 @@ https://github.com/ElecktroSkwiiZz/atomic-tv-capture/releases/latest/download/AT
 - Vérifier les combinaisons selon les touches réellement transmises par la télécommande TCL.
 - Tester une mise à jour 3.1.0 → 3.1.1 avec la **même clé** ; confirmer que les captures existantes restent disponibles.
 - Ne jamais publier le keystore ou ses mots de passe. Choisir une licence publique adaptée si vous souhaitez autoriser la redistribution du code.
+
+## Identité de marque (v3.1.1)
+
+Le logo, la bannière Android TV et l'icône officielle sont conservés sous `branding/` et déployés sous `app/src/main/res/drawable-nodpi/`. Les captures utilisateur ne sont pas filigranées. Après un test Debug validé, publier `v3.1.1` avec la même clé de signature que `v3.1.0`. Ne pas remplacer l'APK déjà publiée sans incrémenter `versionCode`.

@@ -1,3 +1,4 @@
+// ATOMIC TV Capture | JB ATOMIC INDUSTRIES | https://jbatomic.com/
 plugins { id 'com.android.application' }
 
 android {
@@ -9,8 +10,8 @@ android {
         applicationId 'com.jbatomic.tvcapture'
         minSdk 30
         targetSdk 34
-        versionCode 30100
-        versionName '3.1.0'
+        versionCode 30101
+        versionName '3.1.1'
     }
 
     signingConfigs {
@@ -26,7 +27,9 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro' 
             if (project.findProperty('TV_CAPTURE_KEYSTORE')) signingConfig signingConfigs.release
         }
     }

@@ -1,3 +1,7 @@
+/* ATOMIC TV Capture — JB ATOMIC INDUSTRIES — https://jbatomic.com/
+ * © 2026 JB Atomic Industries. Product branding and attribution.
+ * User screenshots and recordings remain unwatermarked.
+ */
 package com.jbatomic.tvcapture;
 
 import android.content.ContentProvider;

@@ -1,3 +1,7 @@
+/* ATOMIC TV Capture — JB ATOMIC INDUSTRIES — https://jbatomic.com/
+ * © 2026 JB Atomic Industries. Product branding and attribution.
+ * User screenshots and recordings remain unwatermarked.
+ */
 package com.jbatomic.tvcapture;
 
 import android.content.Context;
@@ -159,6 +163,12 @@ public final class ShareServer {
             }
             Map<String, String> params = query(isPost ? new String(body, StandardCharsets.UTF_8) : rawQuery);
             String ip = socket.getInetAddress().getHostAddress();
+            if (path.equals("/brand/logo.webp") && !isPost) {
+                sendBrandAsset(out, R.drawable.jb_atomic_company); return;
+            }
+            if (path.equals("/brand/app.webp") && !isPost) {
+                sendBrandAsset(out, R.drawable.atomic_app_icon); return;
+            }
             if (path.equals("/login") && isPost) {
                 login(out, ip, params.getOrDefault("code", "")); return;
             }
@@ -328,12 +338,12 @@ public final class ShareServer {
 
     private static String shell(String title, String body) {
         return "<!doctype html><html lang='fr'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>" +
-            "<meta name='referrer' content='no-referrer'><title>ATOMIC TV Capture · " + escape(title) + "</title><style>" +
+            "<meta name='referrer' content='no-referrer'><title>ATOMIC TV Capture · " + escape(title) + "</title><meta name='theme-color' content='#0b1120'><link rel='icon' type='image/webp' href='/brand/app.webp'><style>" +
             ":root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0b1120;color:#edf6ff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:14px}" +
             "header{border-bottom:1px solid #273751;background:#101a2a;padding:18px max(20px,calc((100vw - 1240px)/2))}" +
-            ".brand{font-weight:800;font-size:19px;letter-spacing:.3px}.brand span{color:#50c7e7}main{max-width:1240px;margin:30px auto;padding:0 20px}" +
+            ".brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:800;font-size:19px;letter-spacing:.3px}.brand img{width:154px;height:46px;object-fit:contain}.brand img.app-mark{width:40px;height:40px;border-radius:9px}.brand span{color:#50c7e7}.brand .brand-caption{border-left:1px solid #315579;padding-left:14px}main{max-width:1240px;margin:30px auto;padding:0 20px}" +
             ".eyebrow{font-size:11px;font-weight:800;color:#66d7ed;letter-spacing:1.4px}h1{font-size:25px;margin:4px 0 5px}h2{font-size:18px;margin:0 0 7px}p{color:#a8bcd1;line-height:1.6;margin:5px 0 17px}" +
-            ".panel{border:1px solid #2b4059;background:#162235;padding:22px;border-radius:14px;margin-bottom:18px}.heading,.actions,.item-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.actions{justify-content:flex-start}" +
+            ".panel{position:relative;isolation:isolate;overflow:hidden;border:1px solid #2b4059;background:#162235;padding:22px;border-radius:14px;margin-bottom:18px}.panel::before{content:'';position:absolute;right:14px;bottom:12px;width:180px;height:58px;background:url('/brand/logo.webp') center / contain no-repeat;opacity:.07;z-index:0;pointer-events:none}.panel>*{position:relative;z-index:1}.heading,.actions,.item-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.actions{justify-content:flex-start}" +
             ".btn{border:1px solid #355069;border-radius:8px;background:#253851;color:#e8f4ff;padding:10px 14px;text-decoration:none;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap}" +
             ".btn:hover{background:#395676}.btn.primary{background:#158cb3;border-color:#158cb3;color:white}.btn.danger{background:transparent;border-color:#874a52;color:#ffbcbf}" +
             ".btn.ghost{background:transparent}.btn.small{padding:8px 10px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:15px;margin-top:16px}" +
@@ -343,8 +353,27 @@ public final class ShareServer {
             ".login{max-width:440px;margin:65px auto}.login input{background:#edf8ff;color:#0b1425;border:0;border-radius:7px;font-size:22px;width:150px;padding:8px 12px;margin-right:10px}" +
             ".hint{margin-top:24px;font-size:12px}.notice{padding:12px;border-radius:8px;background:#183e45;margin-bottom:16px;color:#aef5e6}.empty{padding:35px;color:#a6b9d0}" +
             "footer{text-align:center;color:#8196b2;font-size:12px;padding:12px 20px 35px}@media(max-width:600px){h1{font-size:22px}.panel{padding:15px}}" +
-            "</style></head><body><header><div class='brand'>▣ ATOMIC <span>TV CAPTURE</span> <small style='color:#8caac2;font-size:11px'>by JB ATOMIC INDUSTRIES</small></div></header>" +
-            "<main>" + body + "</main><footer>JB ATOMIC INDUSTRIES · jbatomic.com · Accès local</footer></body></html>";
+            "</style></head><body><header><div class='brand'><img class='app-mark' src='/brand/app.webp' alt='ATOMIC TV Capture'><img src='/brand/logo.webp' alt='JB Atomic Industries'><div class='brand-caption'>ATOMIC <span>TV CAPTURE</span><small style='display:block;color:#8caac2;font-size:11px'>BY JB ATOMIC INDUSTRIES · v" + BuildConfig.VERSION_NAME + "</small></div></div></header>" +
+            "<main>" + body + "</main><footer>© 2026 JB ATOMIC INDUSTRIES · <a style='color:#66d7ed' href='https://jbatomic.com/' target='_blank' rel='noopener noreferrer'>jbatomic.com</a> · ATOMIC TV Capture v" + BuildConfig.VERSION_NAME + " · Accès local</footer></body></html>";
+    }
+
+    /** Public branding asset only — never exposes screenshots or user content. */
+    private void sendBrandAsset(OutputStream out, int drawableId) throws IOException {
+        ByteArrayOutputStream data = new ByteArrayOutputStream(65536);
+        try (InputStream in = app.getResources().openRawResource(drawableId)) {
+            byte[] buffer = new byte[8192];
+            int n;
+            while ((n = in.read(buffer)) != -1) {
+                if (data.size() + n > 256_000) throw new IOException("Logo trop volumineux");
+                data.write(buffer, 0, n);
+            }
+        }
+        byte[] image = data.toByteArray();
+        String header = "HTTP/1.1 200 OK\r\nContent-Type: image/webp\r\nContent-Length: " + image.length +
+            "\r\nCache-Control: public, max-age=3600\r\nX-Content-Type-Options: nosniff\r\nConnection: close\r\n\r\n";
+        out.write(header.getBytes(StandardCharsets.US_ASCII));
+        out.write(image);
+        out.flush();
     }
 
     private void sendArchive(OutputStream out) throws IOException {
@@ -410,7 +439,8 @@ public final class ShareServer {
         byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
         String description = status == 200 ? "OK" : status == 401 ? "Unauthorized" : status == 403 ? "Forbidden" : status == 404 ? "Not Found" : status == 405 ? "Method Not Allowed" : status == 429 ? "Too Many Requests" : "Error";
         String headers = "HTTP/1.1 " + status + " " + description + "\r\nContent-Type: " + type + "\r\nContent-Length: " + bytes.length +
-            "\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\nX-Frame-Options: DENY\r\nReferrer-Policy: no-referrer\r\nConnection: close\r\n" +
+            "\r\nCache-Control: no-store\r\nX-Content-Type-Options: nosniff\r\nX-Frame-Options: DENY\r\nReferrer-Policy: no-referrer\r\n" +
+            "Content-Security-Policy: default-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'\r\nConnection: close\r\n" +
             (cookie == null ? "" : "Set-Cookie: " + cookie + "\r\n") + "\r\n";
         out.write(headers.getBytes(StandardCharsets.US_ASCII)); out.write(bytes); out.flush();
     }
