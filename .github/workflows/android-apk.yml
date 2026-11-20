@@ -53,25 +53,8 @@ jobs:
             echo "Tag ${GITHUB_REF_NAME} différent de la version Android v${version}" >&2
             exit 1
           fi
-      - name: Vérifier si la version Android doit être publiée
-        id: release_plan
-        if: github.ref == 'refs/heads/main'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          version=$(sed -nE "s/.*versionName '([^']+)'.*/\1/p" app/build.gradle | head -1)
-          [ -n "$version" ] || { echo "Version Android manquante" >&2; exit 1; }
-          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
-          if gh release view "v${version}" >/dev/null 2>&1; then
-            echo "publish=false" >> "$GITHUB_OUTPUT"
-            echo "La Release v${version} existe déjà, aucune nouvelle publication."
-          else
-            echo "publish=true" >> "$GITHUB_OUTPUT"
-            echo "La Release v${version} sera compilée et signée."
-          fi
       - name: Restaurer la clé de signature (depuis GitHub Secrets)
-        if: startsWith(github.ref, 'refs/tags/v') || steps.release_plan.outputs.publish == 'true'
+        if: startsWith(github.ref, 'refs/tags/v')
         shell: bash
         env:
           TV_KEY_B64: ${{ secrets.TV_CAPTURE_KEYSTORE_BASE64 }}
@@ -82,7 +65,7 @@ jobs:
           [ -n "$TV_KEY_B64" ] && [ -n "$TV_PASS" ] && [ -n "$TV_KEY_PASS" ] && [ -n "$TV_ALIAS" ] || { echo 'Secrets de signature manquants'; exit 1; }
           printf '%s' "$TV_KEY_B64" | base64 --decode > "$RUNNER_TEMP/atomic-tv-capture-release.jks"
       - name: Compiler la Release officielle signée
-        if: startsWith(github.ref, 'refs/tags/v') || steps.release_plan.outputs.publish == 'true'
+        if: startsWith(github.ref, 'refs/tags/v')
         shell: bash
         env:
           TV_PASS: ${{ secrets.TV_CAPTURE_STORE_PASSWORD }}
@@ -104,23 +87,17 @@ jobs:
           fi
           sha256sum ATOMIC-TV-Capture-AndroidTV.apk > ATOMIC-TV-Capture-AndroidTV.apk.sha256
       - name: Publier l'APK signée dans une GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v') || steps.release_plan.outputs.publish == 'true'
+        if: startsWith(github.ref, 'refs/tags/v')
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="$GITHUB_REF_NAME"
-          publish_flags=(--verify-tag)
-          if [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
-            tag="${{ steps.release_plan.outputs.tag }}"
-            publish_flags=(--target "$GITHUB_SHA")
-          fi
-          gh release create "$tag" \
+          gh release create "$GITHUB_REF_NAME" \
             ATOMIC-TV-Capture-AndroidTV.apk ATOMIC-TV-Capture-AndroidTV.apk.sha256 \
-            --title "ATOMIC TV Capture $tag" \
-            --generate-notes "${publish_flags[@]}"
+            --title "ATOMIC TV Capture $GITHUB_REF_NAME" \
+            --generate-notes --verify-tag
       - name: Conserver une copie de l'APK signée
-        if: startsWith(github.ref, 'refs/tags/v') || steps.release_plan.outputs.publish == 'true'
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: ATOMIC-TV-Capture-RELEASE-SIGNED
