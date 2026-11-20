@@ -32,6 +32,10 @@ jobs:
       - name: Compiler une APK de test sur main
         if: github.ref == 'refs/heads/main'
         run: gradle --no-daemon --stacktrace assembleDebug
+      - name: Vérifier la compilation Release protégée (R8)
+        if: github.ref == 'refs/heads/main'
+        run: gradle --no-daemon --stacktrace assembleRelease
+
       - name: Exporter l'APK de test
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
