@@ -109,22 +109,22 @@ public class RemoteAccessibilityService extends AccessibilityService {
             takeScreenshot(Display.DEFAULT_DISPLAY, getMainExecutor(), new TakeScreenshotCallback() {
                 @Override public void onSuccess(ScreenshotResult result) {
                     HardwareBuffer buffer = result.getHardwareBuffer();
-                    if (buffer == null) { toast("Capture impossible : écran protégé"); return; }
+                    if (buffer == null) { toast(t("Capture impossible : écran protégé","Screenshot blocked: protected screen")); return; }
                     try {
                         ColorSpace color = result.getColorSpace();
                         if (color == null) color = ColorSpace.get(ColorSpace.Named.SRGB);
                         Bitmap hardware = Bitmap.wrapHardwareBuffer(buffer, color);
-                        if (hardware == null) { toast("Capture indisponible"); return; }
+                        if (hardware == null) { toast(t("Capture indisponible","Screenshot unavailable")); return; }
                         Bitmap bitmap = hardware.copy(Bitmap.Config.ARGB_8888, false);
                         hardware.recycle();
                         if (bitmap != null) CaptureStore.saveBitmap(RemoteAccessibilityService.this, bitmap);
-                        else toast("Impossible d'enregistrer l'image");
-                    } catch (Exception e) { toast("Échec de capture : " + e.getClass().getSimpleName()); }
+                        else toast(t("Impossible d'enregistrer l'image","Unable to save screenshot"));
+                    } catch (Exception e) { toast(t("Échec de capture : ","Screenshot failed: ") + e.getClass().getSimpleName()); }
                     finally { buffer.close(); }
                 }
-                @Override public void onFailure(int errorCode) { toast("Échec de capture (" + errorCode + ")"); }
+                @Override public void onFailure(int errorCode) { toast(t("Échec de capture (","Screenshot failed (") + errorCode + ")"); }
             });
-        } catch (Exception e) { toast("Capture refusée par Android"); }
+        } catch (Exception e) { toast(t("Capture refusée par Android","Android blocked screenshot")); }
     }
 
     private void toggleRecording() {
@@ -135,9 +135,15 @@ public class RemoteAccessibilityService extends AccessibilityService {
             intent.setAction(MainActivity.ACTION_REQUEST_RECORD);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             try { startActivity(intent); }
-            catch (Exception e) { toast("Ouvrez ATOMIC TV Capture pour autoriser la vidéo"); }
+            catch (Exception e) { toast(t("Ouvrez ATOMIC TV Capture pour autoriser la vidéo","Open ATOMIC TV Capture to allow screen recording")); }
         }
     }
+
+    private boolean english() {
+        return "en".equals(getSharedPreferences("tv_capture", MODE_PRIVATE).getString("language",
+            java.util.Locale.getDefault().getLanguage().equals("en") ? "en" : "fr"));
+    }
+    private String t(String fr,String en) { return english() ? en : fr; }
 
     private void toast(String message) { Toast.makeText(this, message, Toast.LENGTH_LONG).show(); }
 }

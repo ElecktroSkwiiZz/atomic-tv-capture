@@ -70,7 +70,7 @@ public class RecordingService extends Service {
             int resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, 0);
             MediaProjectionManager mgr = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
             projection = mgr.getMediaProjection(resultCode, resultData);
-            if (projection == null) throw new IllegalStateException("Capture refusée");
+            if (projection == null) throw new IllegalStateException(t("Capture refusée","Screen capture denied"));
             projectionCallback = new MediaProjection.Callback() {
                 @Override public void onStop() { new Handler(Looper.getMainLooper()).post(() -> { stopRecording(); stopSelf(); }); }
             };
@@ -101,30 +101,36 @@ public class RecordingService extends Service {
             recorder.start();
             startedAt = System.currentTimeMillis();
             recording = true;
-            Toast.makeText(this, "Enregistrement vidéo démarré (sans audio)", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, t("Enregistrement vidéo démarré (sans audio)","Video recording started (no audio)"), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
-            Toast.makeText(this, "Impossible d'enregistrer : " + e.getClass().getSimpleName(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, t("Impossible d'enregistrer : ","Unable to record: ") + e.getClass().getSimpleName(), Toast.LENGTH_LONG).show();
             stopRecording();
             stopSelf();
         }
         return START_NOT_STICKY;
     }
 
+    private boolean english() {
+        return "en".equals(getSharedPreferences("tv_capture", MODE_PRIVATE).getString("language",
+            java.util.Locale.getDefault().getLanguage().equals("en") ? "en" : "fr"));
+    }
+    private String t(String fr,String en) { return english() ? en : fr; }
+
     private Notification makeNotification() {
         Intent stop = new Intent(this, RecordingService.class).setAction(ACTION_STOP);
         PendingIntent pi = PendingIntent.getService(this, 1, stop,
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         return new Notification.Builder(this, CHANNEL)
-            .setContentTitle("ATOMIC TV Capture — enregistrement")
-            .setContentText("La vidéo est enregistrée. Appuyez sur Arrêter pour terminer.")
+            .setContentTitle(t("ATOMIC TV Capture — enregistrement","ATOMIC TV Capture — recording"))
+            .setContentText(t("La vidéo est enregistrée. Appuyez sur Arrêter pour terminer.","Recording in progress. Press Stop to finish."))
             .setSmallIcon(android.R.drawable.ic_menu_camera)
             .setOngoing(true)
-            .addAction(new Notification.Action.Builder(android.R.drawable.ic_media_pause, "Arrêter", pi).build())
+            .addAction(new Notification.Action.Builder(android.R.drawable.ic_media_pause, t("Arrêter","Stop"), pi).build())
             .build();
     }
 
     private void createChannel() {
-        NotificationChannel channel = new NotificationChannel(CHANNEL, "Enregistrement d'écran",
+        NotificationChannel channel = new NotificationChannel(CHANNEL, t("Enregistrement d'écran","Screen recording"),
             NotificationManager.IMPORTANCE_LOW);
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(channel);
     }
@@ -149,7 +155,7 @@ public class RecordingService extends Service {
         }
         if (file != null && !valid) file.delete();
         if (wasRecording) Toast.makeText(this,
-            valid ? "Vidéo enregistrée : " + file.getName() : "Vidéo trop courte ou interrompue", Toast.LENGTH_LONG).show();
+            valid ? t("Vidéo enregistrée : ","Video saved: ") + file.getName() : t("Vidéo trop courte ou interrompue","Recording too short or interrupted"), Toast.LENGTH_LONG).show();
         stopForeground(STOP_FOREGROUND_REMOVE);
     }
 

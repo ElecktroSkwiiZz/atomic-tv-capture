@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
         body.addView(upper);
 
         LinearLayout capture = panel(upper, wide, t("CAPTURE D'ÉCRAN", "SCREENSHOT"));
-        label(capture, shot.label(), 14, FG, true, 6);
+        label(capture, shortcutLabel(shot), 14, FG, true, 6);
         label(capture, t("Appui long 1,1 s  •  Combinaison 0,7 s", "Long press 1.1 s  •  Combination 0.7 s"), 11, MUTED, false, 7);
         action(capture, t("Capturer l'écran (après 2 secondes)", "Take screenshot (after 2 seconds)"), true, () -> {
             if (!RemoteAccessibilityService.isConnected()) { toast(t("Active l'accessibilité avant la capture", "Enable accessibility before taking a screenshot")); return; }
@@ -148,7 +148,7 @@ public class MainActivity extends Activity {
         LinearLayout movie = panel(upper, wide, t("ENREGISTREMENT VIDÉO", "VIDEO RECORDING"));
         label(movie, RecordingService.isRecording() ? t("● EN COURS", "● RECORDING") : t("Prêt · MP4 H.264 / 1080p / 30 fps", "Ready · MP4 H.264 / 1080p / 30 fps"), 13,
             RecordingService.isRecording() ? 0xfff19a9b : MUTED, true, 6);
-        label(movie, t("Raccourci : ", "Shortcut: ") + video.label(), 12, MUTED, false, 9);
+        label(movie, t("Raccourci : ", "Shortcut: ") + shortcutLabel(video), 12, MUTED, false, 9);
         action(movie, RecordingService.isRecording() ? t("Arrêter l'enregistrement", "Stop recording") : t("Démarrer l'enregistrement", "Start recording"), true, () -> {
             if (RecordingService.isRecording()) {
                 startService(new Intent(this, RecordingService.class).setAction(RecordingService.ACTION_STOP));
@@ -257,7 +257,7 @@ public class MainActivity extends Activity {
         if (selected.sameAs(ShortcutConfig.read(this, other))) { toast(t("Déjà attribué à l'autre fonction", "Already assigned to the other action")); return true; }
         selected.save(this, action);
         learning = 0; learningFirst = -1;
-        toast(t("Raccourci enregistré : ", "Shortcut saved: ") + selected.label());
+        toast(t("Raccourci enregistré : ", "Shortcut saved: ") + shortcutLabel(selected));
         render();
         return true;
     }
@@ -359,6 +359,13 @@ public class MainActivity extends Activity {
             } catch (Exception e) { toast(t("Impossible de démarrer la vidéo", "Could not start video recording")); }
         } else toast(t("Autorisation de capture refusée", "Screen capture permission denied"));
         handler.postDelayed(this::render, 1100);
+    }
+
+    private String shortcutLabel(ShortcutConfig shortcut) {
+        if (!english) return shortcut.label();
+        if (!shortcut.enabled()) return "Disabled";
+        if (!shortcut.isChord()) return ShortcutConfig.key(shortcut.first) + " · long press";
+        return ShortcutConfig.key(shortcut.first) + " + " + ShortcutConfig.key(shortcut.second) + " · long press";
     }
 
     private LinearLayout vertical() { LinearLayout l = new LinearLayout(this); l.setOrientation(LinearLayout.VERTICAL); return l; }
