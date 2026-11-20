@@ -60,7 +60,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          version=$(sed -nE "s/.*versionName '([^']+)'.*/\\1/p" app/build.gradle | head -1)
+          version=$(sed -nE "s/.*versionName '([^']+)'.*/\1/p" app/build.gradle | head -1)
           [ -n "$version" ] || { echo "Version Android manquante" >&2; exit 1; }
           echo "tag=v${version}" >> "$GITHUB_OUTPUT"
           if gh release view "v${version}" >/dev/null 2>&1; then
