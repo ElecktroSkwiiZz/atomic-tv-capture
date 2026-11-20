@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item><shape><solid android:color="#0B1930"/><corners android:radius="12dp"/></shape></item>
-    <item android:drawable="@drawable/console_icon" android:gravity="center" android:width="175dp" android:height="175dp"/>
-</layer-list>
