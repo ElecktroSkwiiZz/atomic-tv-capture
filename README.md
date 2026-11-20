@@ -40,9 +40,9 @@ ATOMIC TV Capture est édité par **JB Atomic Industries**. L'icône de l'applic
 2. Installer l'APK sur la TV ou via ADB. Depuis le dossier qui contient `adb.exe` et l'APK :
 
    ```powershell
-   # Remplace 192.168.X.X par l'adresse IP affichée dans les paramètres réseau de TA TV.
-   .\adb connect 192.168.X.X:5555
-   .\adb -s 192.168.X.X:5555 install -r ".\ATOMIC-TV-Capture-AndroidTV.apk"
+   $TV_IP = Read-Host "Adresse IP de votre Android TV (Paramètres > Réseau)"
+   .\adb connect "${TV_IP}:5555"
+   .\adb -s "${TV_IP}:5555" install -r ".\ATOMIC-TV-Capture-AndroidTV.apk"
    ```
 
 3. Sur la TV, ouvrir **Paramètres → Accessibilité**, puis activer **ATOMIC TV Capture — raccourcis télécommande**.
