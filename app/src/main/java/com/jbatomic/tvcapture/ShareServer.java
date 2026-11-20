@@ -336,8 +336,13 @@ public final class ShareServer {
             "<button class='" + cls + "' type='submit'>" + escape(title) + "</button></form>";
     }
 
-    private static String shell(String title, String body) {
-        return "<!doctype html><html lang='fr'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>" +
+    private boolean englishUi() {
+        return "en".equals(app.getSharedPreferences("tv_capture", Context.MODE_PRIVATE)
+            .getString("language", java.util.Locale.getDefault().getLanguage().equals("en") ? "en" : "fr"));
+    }
+
+    private String shell(String title, String body) {
+        String page = "<!doctype html><html lang='fr'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>" +
             "<meta name='referrer' content='no-referrer'><title>ATOMIC TV Capture · " + escape(title) + "</title><meta name='theme-color' content='#0b1120'><link rel='icon' type='image/webp' href='/brand/app.webp'><style>" +
             ":root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0b1120;color:#edf6ff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:14px}" +
             "header{border-bottom:1px solid #273751;background:#101a2a;padding:18px max(20px,calc((100vw - 1240px)/2))}" +
@@ -355,6 +360,43 @@ public final class ShareServer {
             "footer{text-align:center;color:#8196b2;font-size:12px;padding:12px 20px 35px}@media(max-width:600px){h1{font-size:22px}.panel{padding:15px}}" +
             "</style></head><body><header><div class='brand'><img class='app-mark' src='/brand/app.webp' alt='ATOMIC TV Capture'><img src='/brand/logo.webp' alt='JB Atomic Industries'><div class='brand-caption'>ATOMIC <span>TV CAPTURE</span><small style='display:block;color:#8caac2;font-size:11px'>BY JB ATOMIC INDUSTRIES · v" + BuildConfig.VERSION_NAME + "</small></div></div></header>" +
             "<main>" + body + "</main><footer>© 2026 JB ATOMIC INDUSTRIES · <a style='color:#66d7ed' href='https://jbatomic.com/' target='_blank' rel='noopener noreferrer'>jbatomic.com</a> · ATOMIC TV Capture v" + BuildConfig.VERSION_NAME + " · Accès local</footer></body></html>";
+        if (!englishUi()) return page;
+        return page
+            .replace("lang='fr'","lang='en'")
+            .replace("Connexion bloquée","Connection locked")
+            .replace("Code incorrect","Incorrect PIN")
+            .replace("Accès temporairement verrouillé","Temporarily locked")
+            .replace("Nouvel essai dans 10 minutes.","Try again in 10 minutes.")
+            .replace("CONNEXION LOCALE","LOCAL SIGN-IN")
+            .replace("Accéder à votre TV","Access your TV")
+            .replace("Entrez le code à quatre chiffres visible sur la télévision. Après cinq échecs, l'accès est bloqué pendant dix minutes.","Enter the four-digit PIN displayed on the TV. Five incorrect attempts will lock access for ten minutes.")
+            .replace("Se connecter","Sign in")
+            .replace("Connexion limitée à votre réseau local. Ne rendez pas ce port accessible depuis Internet.","This service is limited to your local network. Never expose it to the Internet.")
+            .replace("TABLEAU DE BORD","DASHBOARD")
+            .replace("Bibliothèque & commandes","Library & controls")
+            .replace(" fichier(s) · "," file(s) · ")
+            .replace(" sur la TV"," on the TV")
+            .replace("Déconnexion","Sign out")
+            .replace("Capturer à distance","Capture remotely")
+            .replace("La capture d'écran nécessite le service d'accessibilité. La vidéo demande une autorisation sur la TV.","Screenshots require the accessibility service. Video recording needs permission on the TV.")
+            .replace("Capture d'écran","Screenshot")
+            .replace("Démarrer vidéo","Start video")
+            .replace("Arrêter vidéo","Stop video")
+            .replace("Fichiers","Files")
+            .replace("Enregistrez une copie sur votre PC avant de supprimer les originaux.","Save a copy on your PC before deleting original files.")
+            .replace("Tout télécharger (.zip)","Download all (.zip)")
+            .replace("Actualiser","Refresh")
+            .replace("Tout effacer","Delete all")
+            .replace("Supprimer définitivement toutes les images et vidéos de la TV ?","Permanently delete all screenshots and videos from the TV?")
+            .replace("Télécharger","Download")
+            .replace("Supprimer","Delete")
+            .replace("Supprimer définitivement ce fichier ?","Permanently delete this file?")
+            .replace("Aucune capture enregistrée pour le moment.","No screenshots or videos saved yet.")
+            .replace("Vidéo MP4","MP4 video")
+            .replace("Accès local","Local access")
+            .replace("Mes captures","My captures")
+            .replace("Connexion","Sign in");
+
     }
 
     /** Public branding asset only — never exposes screenshots or user content. */
