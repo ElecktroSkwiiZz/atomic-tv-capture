@@ -1,0 +1,21 @@
+.gradle/
+.idea/
+*.iml
+local.properties
+build/
+app/build/
+*.jks
+*.keystore
+release_password.txt
+TV-Capture-PRIVATE-SIGNING.zip
+*.apk
+.DS_Store
+
+# Signatures et fichiers privés — ne jamais versionner
+*.p12
+*.pfx
+*.pem
+*.key
+*PRIVATE*SIGNING*
+*release*password*
+secrets.properties

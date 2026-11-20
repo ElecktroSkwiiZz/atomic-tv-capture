@@ -1,0 +1,37 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.jbatomic.tvcapture'
+    compileSdk 35
+    buildFeatures { buildConfig true }
+
+    defaultConfig {
+        applicationId 'com.jbatomic.tvcapture'
+        minSdk 30
+        targetSdk 34
+        versionCode 30100
+        versionName '3.1.0'
+    }
+
+    signingConfigs {
+        release {
+            def keyPath = project.findProperty('TV_CAPTURE_KEYSTORE')
+            if (keyPath) {
+                storeFile file(keyPath)
+                storePassword project.findProperty('TV_CAPTURE_STORE_PASSWORD') ?: ''
+                keyAlias project.findProperty('TV_CAPTURE_KEY_ALIAS') ?: 'tv-capture'
+                keyPassword project.findProperty('TV_CAPTURE_KEY_PASSWORD') ?: ''
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (project.findProperty('TV_CAPTURE_KEYSTORE')) signingConfig signingConfigs.release
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

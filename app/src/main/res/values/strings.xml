@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ATOMIC TV Capture</string>
+    <string name="accessibility_description">Permet de lancer une capture d’écran lorsque vous maintenez la touche configurée sur la télécommande. Ne lit pas les textes affichés.</string>
+</resources>

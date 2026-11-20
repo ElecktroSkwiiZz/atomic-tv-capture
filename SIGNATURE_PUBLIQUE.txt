@@ -1,0 +1,13 @@
+ATOMIC TV CAPTURE — Certificat de signature APK Release officiel
+
+Éditeur : JB ATOMIC INDUSTRIES
+Package Android : com.jbatomic.tvcapture
+Alias de clé : tv-capture
+Algorithme : RSA 3072 / SHA256withRSA
+Certificat SHA-256 : 8E:FB:59:EB:5A:F7:40:33:6E:A7:42:C4:F2:51:CD:E9:67:91:5D:98:FE:7F:62:B4:36:5D:AE:53:05:F1:41:97
+
+Cet identifiant public correspond à la clé privée livrée SÉPARÉMENT.
+NE JAMAIS ajouter le fichier privé .jks ou son mot de passe dans un dépôt public.
+
+Pour vérifier une APK signée, utiliser apksigner verify --print-certs NOM.apk
+et comparer l'empreinte du certificat affichée.
