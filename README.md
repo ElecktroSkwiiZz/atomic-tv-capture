@@ -8,7 +8,7 @@
 
 **Captures d'écran · Enregistrement vidéo · Transfert et contrôle depuis un PC**
 
-**Éditeur : [JB Atomic Industries](https://jbatomic.com/)** · Android TV / Google TV · Version 3.1.1
+[🇬🇧 English documentation](README.en.md) · **Éditeur : [JB Atomic Industries](https://jbatomic.com/)** · Android TV / Google TV · Version 3.1.1
 
 </div>
 

@@ -40,12 +40,16 @@ public class MainActivity extends Activity {
     private LinearLayout body;
     private boolean consentInProgress = false;
     private boolean firstResume = true;
+    private boolean english;
+    private String t(String fr, String en) { return english ? en : fr; }
     private int learning = 0; // 1 screenshot, 2 video
     private boolean learningCombo = false;
     private int learningFirst = -1;
 
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state);
+        english = "en".equals(getSharedPreferences("tv_capture", MODE_PRIVATE)
+            .getString("language", java.util.Locale.getDefault().getLanguage().equals("en") ? "en" : "fr"));
         render();
         handler.postDelayed(() -> new UpdateManager(this).checkAutomaticallyIfDue(), 1500);
         if (ACTION_REQUEST_RECORD.equals(getIntent().getAction())) handler.postDelayed(this::requestRecording, 250);
@@ -100,11 +104,25 @@ public class MainActivity extends Activity {
         label(brandText, "ATOMIC TV CAPTURE", 19, FG, true, 0);
         label(brandText, "VERSION " + BuildConfig.VERSION_NAME + "  /  JB ATOMIC INDUSTRIES", 10, ACCENT, false, 0);
         TextView state = new TextView(this);
-        state.setText(RemoteAccessibilityService.isConnected() ? "●  SERVICE ACTIF" : "●  SERVICE INACTIF");
+        state.setText(RemoteAccessibilityService.isConnected() ? t("●  SERVICE ACTIF", "●  SERVICE ACTIVE") : t("●  SERVICE INACTIF", "●  SERVICE INACTIVE"));
         state.setTextSize(12);
         state.setTextColor(RemoteAccessibilityService.isConnected() ? 0xff73dbad : 0xffffbd76);
         state.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
         top.addView(state, new LinearLayout.LayoutParams(-2, dp(44)));
+        Button switchLanguage = new Button(this);
+        switchLanguage.setText(english ? "FR" : "EN");
+        switchLanguage.setTextSize(13);
+        switchLanguage.setAllCaps(false);
+        switchLanguage.setTextColor(FG);
+        switchLanguage.setBackground(round(0xff1f4961, 9));
+        switchLanguage.setOnClickListener(v -> {
+            english = !english;
+            getSharedPreferences("tv_capture", MODE_PRIVATE).edit().putString("language", english ? "en" : "fr").apply();
+            render();
+        });
+        LinearLayout.LayoutParams languageLp = new LinearLayout.LayoutParams(dp(65), dp(44));
+        languageLp.leftMargin = dp(8);
+        top.addView(switchLanguage, languageLp);
         gap(body, 10);
 
         boolean wide = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -113,72 +131,72 @@ public class MainActivity extends Activity {
         if (!wide) upper.setOrientation(LinearLayout.VERTICAL);
         body.addView(upper);
 
-        LinearLayout capture = panel(upper, wide, "CAPTURE D'ÉCRAN");
+        LinearLayout capture = panel(upper, wide, t("CAPTURE D'ÉCRAN", "SCREENSHOT"));
         label(capture, shot.label(), 14, FG, true, 6);
-        label(capture, "Appui long 1,1 s  •  Combinaison 0,7 s", 11, MUTED, false, 7);
-        action(capture, "Capturer l'écran (après 2 secondes)", true, () -> {
-            if (!RemoteAccessibilityService.isConnected()) { toast("Active l'accessibilité avant la capture"); return; }
+        label(capture, t("Appui long 1,1 s  •  Combinaison 0,7 s", "Long press 1.1 s  •  Combination 0.7 s"), 11, MUTED, false, 7);
+        action(capture, t("Capturer l'écran (après 2 secondes)", "Take screenshot (after 2 seconds)"), true, () -> {
+            if (!RemoteAccessibilityService.isConnected()) { toast(t("Active l'accessibilité avant la capture", "Enable accessibility before taking a screenshot")); return; }
             moveTaskToBack(true);
             handler.postDelayed(() -> RemoteAccessibilityService.requestScreenshot(), 2000);
         });
-        action(capture, "Choisir une touche / combinaison", false, () -> chooseShortcut(1));
-        action(capture, "Accessibilité Android TV", false, () -> {
+        action(capture, t("Choisir une touche / combinaison", "Choose button / combination"), false, () -> chooseShortcut(1));
+        action(capture, t("Accessibilité Android TV", "Android TV accessibility"), false, () -> {
             try { startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)); }
-            catch (Exception e) { toast("Ouvre Paramètres > Accessibilité"); }
+            catch (Exception e) { toast(t("Ouvre Paramètres > Accessibilité", "Open Settings > Accessibility")); }
         });
 
-        LinearLayout movie = panel(upper, wide, "ENREGISTREMENT VIDÉO");
-        label(movie, RecordingService.isRecording() ? "● EN COURS" : "Prêt · MP4 H.264 / 1080p / 30 fps", 13,
+        LinearLayout movie = panel(upper, wide, t("ENREGISTREMENT VIDÉO", "VIDEO RECORDING"));
+        label(movie, RecordingService.isRecording() ? t("● EN COURS", "● RECORDING") : t("Prêt · MP4 H.264 / 1080p / 30 fps", "Ready · MP4 H.264 / 1080p / 30 fps"), 13,
             RecordingService.isRecording() ? 0xfff19a9b : MUTED, true, 6);
-        label(movie, "Raccourci : " + video.label(), 12, MUTED, false, 9);
-        action(movie, RecordingService.isRecording() ? "Arrêter l'enregistrement" : "Démarrer l'enregistrement", true, () -> {
+        label(movie, t("Raccourci : ", "Shortcut: ") + video.label(), 12, MUTED, false, 9);
+        action(movie, RecordingService.isRecording() ? t("Arrêter l'enregistrement", "Stop recording") : t("Démarrer l'enregistrement", "Start recording"), true, () -> {
             if (RecordingService.isRecording()) {
                 startService(new Intent(this, RecordingService.class).setAction(RecordingService.ACTION_STOP));
                 handler.postDelayed(this::render, 550);
             } else requestRecording();
         });
-        action(movie, "Choisir une touche / combinaison", false, () -> chooseShortcut(2));
-        label(movie, "Autorisation Android requise à chaque session. Sans audio.", 11, MUTED, false, 0);
+        action(movie, t("Choisir une touche / combinaison", "Choose button / combination"), false, () -> chooseShortcut(2));
+        label(movie, t("Autorisation Android requise à chaque session. Sans audio.", "Android permission required for each recording. No audio."), 11, MUTED, false, 0);
 
         LinearLayout lower = horizontal();
         if (!wide) lower.setOrientation(LinearLayout.VERTICAL);
         body.addView(lower);
-        LinearLayout transfer = panel(lower, wide, "TRANSFERT & CONTRÔLE PC");
+        LinearLayout transfer = panel(lower, wide, t("TRANSFERT & CONTRÔLE PC", "PC TRANSFER & CONTROL"));
         label(transfer, web.getAddress(), 19, ACCENT, true, 5);
-        label(transfer, "CODE À 4 CHIFFRES : " + web.getPin(), 15, 0xffffd38b, true, 6);
-        label(transfer, web.isRunning() ? "Serveur accessible sur le réseau local" : "Serveur indisponible, vérifie les ports",
+        label(transfer, t("CODE À 4 CHIFFRES : ", "4-DIGIT PIN: ") + web.getPin(), 15, 0xffffd38b, true, 6);
+        label(transfer, web.isRunning() ? t("Serveur accessible sur le réseau local", "Local network server available") : t("Serveur indisponible, vérifie les ports", "Server unavailable; check network ports"),
             12, web.isRunning() ? MUTED : 0xffffbb87, false, 9);
-        action(transfer, "Modifier le port (auto si occupé)", false, this::portDialog);
-        action(transfer, "Générer un nouveau code", false, () -> {
-            new AlertDialog.Builder(this).setTitle("Renouveler le code ?")
-                .setMessage("Toutes les connexions PC existantes seront déconnectées.")
-                .setNegativeButton("Annuler", null)
-                .setPositiveButton("Renouveler", (d, x) -> { web.regeneratePin(); render(); }).show();
+        action(transfer, t("Modifier le port (auto si occupé)", "Change port (automatic fallback)"), false, this::portDialog);
+        action(transfer, t("Générer un nouveau code", "Generate new PIN"), false, () -> {
+            new AlertDialog.Builder(this).setTitle(t("Renouveler le code ?", "Generate a new PIN?"))
+                .setMessage(t("Toutes les connexions PC existantes seront déconnectées.", "All existing PC sessions will be disconnected."))
+                .setNegativeButton(t("Annuler", "Cancel"), null)
+                .setPositiveButton(t("Renouveler", "Regenerate"), (d, x) -> { web.regeneratePin(); render(); }).show();
         });
 
-        LinearLayout storage = panel(lower, wide, "BIBLIOTHÈQUE");
-        label(storage, files.length + " fichier(s) · " + readable(CaptureStore.totalBytes(this)), 18, FG, true, 6);
-        label(storage, "Images PNG et vidéos MP4 stockées sur la TV", 12, MUTED, false, 9);
-        action(storage, "Parcourir / supprimer des captures", true, this::manageFiles);
-        action(storage, "Actualiser", false, this::render);
-        label(storage, "Téléchargement ZIP, suppression unitaire / totale aussi depuis le PC.", 11, MUTED, false, 0);
+        LinearLayout storage = panel(lower, wide, t("BIBLIOTHÈQUE", "LIBRARY"));
+        label(storage, files.length + t(" fichier(s) · ", " file(s) · ") + readable(CaptureStore.totalBytes(this)), 18, FG, true, 6);
+        label(storage, t("Images PNG et vidéos MP4 stockées sur la TV", "PNG screenshots and MP4 videos saved on the TV"), 12, MUTED, false, 9);
+        action(storage, t("Parcourir / supprimer des captures", "Browse / delete captures"), true, this::manageFiles);
+        action(storage, t("Actualiser", "Refresh"), false, this::render);
+        label(storage, t("Téléchargement ZIP, suppression unitaire / totale aussi depuis le PC.", "Download ZIP files or delete individual / all items from the PC."), 11, MUTED, false, 0);
 
         LinearLayout updatesRow = horizontal();
         body.addView(updatesRow);
-        LinearLayout updates = panel(updatesRow, false, "APPLICATION & MISES À JOUR");
+        LinearLayout updates = panel(updatesRow, false, t("APPLICATION & MISES À JOUR", "APP & UPDATES"));
         label(updates, "Version " + BuildConfig.VERSION_NAME + "   •   par JB Atomic Industries", 12, MUTED, false, 6);
-        label(updates, "Dépôt : " + UpdateManager.repository(this), 11, MUTED, false, 7);
-        action(updates, "Rechercher une mise à jour sur GitHub", true, () -> new UpdateManager(this).check());
-        action(updates, "Configurer le dépôt de publication", false, this::githubRepositoryDialog);
+        label(updates, t("Dépôt : ", "Repository: ") + UpdateManager.repository(this), 11, MUTED, false, 7);
+        action(updates, t("Rechercher une mise à jour sur GitHub", "Check GitHub for updates"), true, () -> new UpdateManager(this).check());
+        action(updates, t("Configurer le dépôt de publication", "Configure the release repository"), false, this::githubRepositoryDialog);
         boolean auto = getSharedPreferences("tv_capture", MODE_PRIVATE).getBoolean("auto_update_check", true);
-        action(updates, "Vérifier à l’ouverture (toutes les 24h) : " + (auto ? "activée" : "désactivée"), false, () -> {
+        action(updates, t("Vérifier à l’ouverture (toutes les 24h) : ", "Check on launch (every 24h): ") + (auto ? t("activée", "enabled") : t("désactivée", "disabled")), false, () -> {
             getSharedPreferences("tv_capture", MODE_PRIVATE).edit().putBoolean("auto_update_check", !auto).apply();
             render();
         });
 
         // Corporate signature: visible in the TV UI, never burned into users' screenshots or recordings.
         label(body, "© 2026 JB ATOMIC INDUSTRIES · https://jbatomic.com/ · ATOMIC TV Capture v" + BuildConfig.VERSION_NAME +
-            " · HDMI et contenus protégés : capture parfois impossible.", 11, MUTED, false, 0);
+            t(" · HDMI et contenus protégés : capture parfois impossible.", " · HDMI and DRM-protected content may not be capturable."), 11, MUTED, false, 0);
     }
 
     private LinearLayout panel(LinearLayout parent, boolean wide, String title) {
@@ -196,8 +214,8 @@ public class MainActivity extends Activity {
     }
 
     private void chooseShortcut(int target) {
-        new AlertDialog.Builder(this).setTitle(target == 1 ? "Raccourci capture" : "Raccourci vidéo")
-            .setItems(new String[] { "Appui long sur une touche", "Deux touches simultanées", "Désactiver le raccourci" },
+        new AlertDialog.Builder(this).setTitle(target == 1 ? t("Raccourci capture", "Screenshot shortcut") : t("Raccourci vidéo", "Recording shortcut"))
+            .setItems(new String[] { t("Appui long sur une touche", "Long-press one button"), t("Deux touches simultanées", "Press two buttons together"), t("Désactiver le raccourci", "Disable shortcut") },
                 (dialog, option) -> {
                     String action = target == 1 ? ShortcutConfig.SCREENSHOT : ShortcutConfig.VIDEO;
                     if (option == 2) {
@@ -207,8 +225,8 @@ public class MainActivity extends Activity {
                     learning = target;
                     learningCombo = option == 1;
                     learningFirst = -1;
-                    toast(learningCombo ? "Garde une touche enfoncée puis appuie sur une deuxième touche" :
-                        "Appuie maintenant sur la touche à utiliser (Retour pour annuler)");
+                    toast(learningCombo ? t("Garde une touche enfoncée puis appuie sur une deuxième touche", "Hold one button and then press another") :
+                        t("Appuie maintenant sur la touche à utiliser (Retour pour annuler)", "Press the desired button (Back to cancel)"));
                 }).show();
     }
 
@@ -218,47 +236,47 @@ public class MainActivity extends Activity {
         if (event.getAction() == KeyEvent.ACTION_UP) {
             if (learningCombo && key == learningFirst) {
                 learningFirst = -1;
-                toast("Maintiens la première touche jusqu'à la deuxième");
+                toast(t("Maintiens la première touche jusqu'à la deuxième", "Hold the first button until you press the second"));
             }
             return true;
         }
         if (event.getAction() != KeyEvent.ACTION_DOWN || event.getRepeatCount() != 0) return true;
         if (key == KeyEvent.KEYCODE_BACK || key == KeyEvent.KEYCODE_ESCAPE) {
-            learning = 0; learningFirst = -1; toast("Configuration annulée"); return true;
+            learning = 0; learningFirst = -1; toast(t("Configuration annulée", "Configuration cancelled")); return true;
         }
-        if (ShortcutConfig.isUnsafe(key)) { toast("Touche système réservée : choisis-en une autre"); return true; }
+        if (ShortcutConfig.isUnsafe(key)) { toast(t("Touche système réservée : choisis-en une autre", "System-reserved button: choose another")); return true; }
         if (learningCombo && learningFirst == -1) {
             learningFirst = key;
-            toast("Maintiens " + ShortcutConfig.key(key) + " et appuie sur l'autre touche");
+            toast(t("Maintiens ", "Hold ") + ShortcutConfig.key(key) + t(" et appuie sur l'autre touche", " and press the second button"));
             return true;
         }
         if (learningCombo && learningFirst == key) return true;
         ShortcutConfig selected = new ShortcutConfig(learningCombo ? learningFirst : key, learningCombo ? key : -1);
         String action = learning == 1 ? ShortcutConfig.SCREENSHOT : ShortcutConfig.VIDEO;
         String other = learning == 1 ? ShortcutConfig.VIDEO : ShortcutConfig.SCREENSHOT;
-        if (selected.sameAs(ShortcutConfig.read(this, other))) { toast("Déjà attribué à l'autre fonction"); return true; }
+        if (selected.sameAs(ShortcutConfig.read(this, other))) { toast(t("Déjà attribué à l'autre fonction", "Already assigned to the other action")); return true; }
         selected.save(this, action);
         learning = 0; learningFirst = -1;
-        toast("Raccourci enregistré : " + selected.label());
+        toast(t("Raccourci enregistré : ", "Shortcut saved: ") + selected.label());
         render();
         return true;
     }
 
     private void portDialog() {
         final ShareServer web = ShareServer.get(this);
-        new AlertDialog.Builder(this).setTitle("Port du serveur Web")
-            .setItems(new String[] { "Automatique (à partir de 8766)", "8766", "8770", "8888", "Port personnalisé…" },
+        new AlertDialog.Builder(this).setTitle(t("Port du serveur Web", "Web server port"))
+            .setItems(new String[] { t("Automatique (à partir de 8766)", "Automatic (starting at 8766)"), "8766", "8770", "8888", t("Port personnalisé…", "Custom port…") },
                 (d, which) -> {
                     if (which == 4) {
                         EditText input = new EditText(this);
                         input.setInputType(InputType.TYPE_CLASS_NUMBER);
                         input.setSingleLine(true);
                         input.setText(Integer.toString(web.getPort()));
-                        new AlertDialog.Builder(this).setTitle("Port TCP (1024–65535)")
-                            .setView(input).setNegativeButton("Annuler", null)
-                            .setPositiveButton("Appliquer", (dialog, n) -> {
+                        new AlertDialog.Builder(this).setTitle(t("Port TCP (1024–65535)", "TCP port (1024–65535)"))
+                            .setView(input).setNegativeButton(t("Annuler", "Cancel"), null)
+                            .setPositiveButton(t("Appliquer", "Apply"), (dialog, n) -> {
                                 try { applyPort(Integer.parseInt(input.getText().toString())); }
-                                catch (NumberFormatException e) { toast("Port invalide"); }
+                                catch (NumberFormatException e) { toast(t("Port invalide", "Invalid port")); }
                             }).show();
                     } else {
                         applyPort(which == 0 ? 8766 : which == 1 ? 8766 : which == 2 ? 8770 : 8888);
@@ -267,10 +285,10 @@ public class MainActivity extends Activity {
     }
 
     private void applyPort(int port) {
-        if (port < 1024 || port > 65535) { toast("Choisis un port entre 1024 et 65535"); return; }
+        if (port < 1024 || port > 65535) { toast(t("Choisis un port entre 1024 et 65535", "Choose a port between 1024 and 65535")); return; }
         ShareServer web = ShareServer.get(this);
         web.changePort(port);
-        toast(web.isRunning() ? "Port actif : " + web.getPort() : "Aucun port disponible");
+        toast(web.isRunning() ? t("Port actif : ", "Active port: ") + web.getPort() : t("Aucun port disponible", "No port available"));
         render();
     }
 
@@ -279,42 +297,42 @@ public class MainActivity extends Activity {
         text.setSingleLine(true);
         text.setText(UpdateManager.repository(this));
         text.setSelectAllOnFocus(true);
-        new AlertDialog.Builder(this).setTitle("Dépôt GitHub des versions officielles")
-            .setMessage("Format : propriétaire/dépôt. Les mises à jour utilisent les APK des Releases publiques et vérifient leur signature.")
-            .setView(text).setNegativeButton("Annuler", null)
-            .setPositiveButton("Enregistrer", (d, x) -> {
+        new AlertDialog.Builder(this).setTitle(t("Dépôt GitHub des versions officielles", "Official releases GitHub repository"))
+            .setMessage(t("Format : propriétaire/dépôt. Les mises à jour utilisent les APK des Releases publiques et vérifient leur signature.", "Format: owner/repository. Updates use public GitHub Releases and verify the APK signature."))
+            .setView(text).setNegativeButton(t("Annuler", "Cancel"), null)
+            .setPositiveButton(t("Enregistrer", "Save"), (d, x) -> {
                 String repo = text.getText().toString().trim();
-                if (!UpdateManager.validRepository(repo)) { toast("Dépôt invalide (ex. ElecktroSkwiiZz/atomic-tv-capture)"); return; }
+                if (!UpdateManager.validRepository(repo)) { toast(t("Dépôt invalide (ex. ElecktroSkwiiZz/atomic-tv-capture)", "Invalid repository (e.g. ElecktroSkwiiZz/atomic-tv-capture)")); return; }
                 getSharedPreferences("tv_capture", MODE_PRIVATE).edit().putString("github_repo", repo).apply();
-                toast("Dépôt enregistré : " + repo);
+                toast(t("Dépôt enregistré : ", "Repository saved: ") + repo);
                 render();
             }).show();
     }
 
     private void manageFiles() {
         File[] files = CaptureStore.list(this);
-        if (files.length == 0) { toast("Aucune capture enregistrée"); return; }
+        if (files.length == 0) { toast(t("Aucune capture enregistrée", "No captures saved")); return; }
         String[] choices = new String[files.length];
         for (int i = 0; i < files.length; i++) choices[i] = files[i].getName() + "   (" + readable(files[i].length()) + ")";
-        new AlertDialog.Builder(this).setTitle("Captures et vidéos")
+        new AlertDialog.Builder(this).setTitle(t("Captures et vidéos", "Screenshots and videos"))
             .setItems(choices, (d, index) -> {
                 String name = files[index].getName();
-                new AlertDialog.Builder(this).setTitle("Supprimer cette capture ?")
-                    .setMessage(name).setNegativeButton("Conserver", null)
-                    .setPositiveButton("Supprimer", (a, b) -> {
-                        if (RecordingService.isRecording()) { toast("Arrête la vidéo avant de supprimer"); return; }
-                        toast(CaptureStore.delete(this, name) ? "Capture supprimée" : "Suppression impossible");
+                new AlertDialog.Builder(this).setTitle(t("Supprimer cette capture ?", "Delete this capture?"))
+                    .setMessage(name).setNegativeButton(t("Conserver", "Keep"), null)
+                    .setPositiveButton(t("Supprimer", "Delete"), (a, b) -> {
+                        if (RecordingService.isRecording()) { toast(t("Arrête la vidéo avant de supprimer", "Stop recording before deleting")); return; }
+                        toast(CaptureStore.delete(this, name) ? t("Capture supprimée", "Capture deleted") : t("Suppression impossible", "Could not delete capture"));
                         render();
                     }).show();
-            }).setNeutralButton("Tout supprimer", (d, n) -> {
-                new AlertDialog.Builder(this).setTitle("Vider la bibliothèque ?")
-                    .setMessage(files.length + " fichiers seront définitivement effacés de la TV. Cette action est irréversible.")
-                    .setNegativeButton("Annuler", null)
-                    .setPositiveButton("Tout effacer", (a, b) -> {
-                        if (RecordingService.isRecording()) { toast("Arrête la vidéo avant de supprimer"); return; }
-                        toast(CaptureStore.deleteAll(this) + " fichiers supprimés"); render();
+            }).setNeutralButton(t("Tout supprimer", "Delete all"), (d, n) -> {
+                new AlertDialog.Builder(this).setTitle(t("Vider la bibliothèque ?", "Clear the library?"))
+                    .setMessage(files.length + t(" fichiers seront définitivement effacés de la TV. Cette action est irréversible.", " files will be permanently deleted from the TV. This cannot be undone."))
+                    .setNegativeButton(t("Annuler", "Cancel"), null)
+                    .setPositiveButton(t("Tout effacer", "Delete everything"), (a, b) -> {
+                        if (RecordingService.isRecording()) { toast(t("Arrête la vidéo avant de supprimer", "Stop recording before deleting")); return; }
+                        toast(CaptureStore.deleteAll(this) + t(" fichiers supprimés", " files deleted")); render();
                     }).show();
-            }).setNegativeButton("Fermer", null).show();
+            }).setNegativeButton(t("Fermer", "Close"), null).show();
     }
 
     private void requestRecording() {
@@ -323,7 +341,7 @@ public class MainActivity extends Activity {
             consentInProgress = true;
             MediaProjectionManager manager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
             startActivityForResult(manager.createScreenCaptureIntent(), REQUEST_CAPTURE);
-        } catch (Exception e) { consentInProgress = false; toast("Ce téléviseur refuse la capture vidéo"); }
+        } catch (Exception e) { consentInProgress = false; toast(t("Ce téléviseur refuse la capture vidéo", "This TV does not allow screen recording")); }
     }
 
     @Override protected void onActivityResult(int req, int result, Intent data) {
@@ -336,10 +354,10 @@ public class MainActivity extends Activity {
             intent.putExtra(RecordingService.EXTRA_RESULT_DATA, data);
             try {
                 startForegroundService(intent);
-                toast("Enregistrement lancé. Ouvre l'application souhaitée.");
+                toast(t("Enregistrement lancé. Ouvre l'application souhaitée.", "Recording started. Open the app you want to record."));
                 handler.postDelayed(() -> moveTaskToBack(true), 650);
-            } catch (Exception e) { toast("Impossible de démarrer la vidéo"); }
-        } else toast("Autorisation de capture refusée");
+            } catch (Exception e) { toast(t("Impossible de démarrer la vidéo", "Could not start video recording")); }
+        } else toast(t("Autorisation de capture refusée", "Screen capture permission denied"));
         handler.postDelayed(this::render, 1100);
     }
 

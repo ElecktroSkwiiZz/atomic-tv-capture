@@ -1,5 +1,13 @@
 # Historique des versions — ATOMIC TV Capture
 
+## 3.1.3 — Français / English
+
+- Ajout d'un bouton **EN / FR** dans l'interface Android TV ; sélection mémorisée.
+- Traduction des écrans principaux, raccourcis, contrôles d'enregistrement et messages de confirmation.
+- Ressources de description d'accessibilité en anglais et nouveau README anglais.
+- Identifiant et signature Android inchangés.
+
+
 ## 3.1.2 — Correctif icône du lanceur TV
 
 - L’icône officielle ATOMIC TV Capture est explicitement déclarée sur l’activité Leanback, en plus de l’application.
