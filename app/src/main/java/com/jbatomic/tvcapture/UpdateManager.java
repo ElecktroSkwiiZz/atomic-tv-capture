@@ -207,8 +207,8 @@ public final class UpdateManager {
         Uri uri = Uri.parse("content://" + activity.getPackageName() + ".updates/apk");
         Intent intent = new Intent(Intent.ACTION_VIEW)
             .setDataAndType(uri, "application/vnd.android.package-archive")
-            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            .setClipData(ClipData.newRawUri("ATOMIC TV Capture APK", uri));
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setClipData(ClipData.newRawUri("ATOMIC TV Capture APK", uri));
         try { activity.startActivity(intent); }
         catch (Exception e) { toast("Impossible d'ouvrir l'installeur Android : " + e.getClass().getSimpleName()); }
     }
