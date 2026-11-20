@@ -10,8 +10,8 @@ android {
         applicationId 'com.jbatomic.tvcapture'
         minSdk 30
         targetSdk 34
-        versionCode 30101
-        versionName '3.1.1'
+        versionCode 30102
+        versionName '3.1.2'
     }
 
     signingConfigs {

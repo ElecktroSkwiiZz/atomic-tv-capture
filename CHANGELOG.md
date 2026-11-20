@@ -1,5 +1,13 @@
 # Historique des versions — ATOMIC TV Capture
 
+## 3.1.2 — Correctif icône du lanceur TV
+
+- L’icône officielle ATOMIC TV Capture est explicitement déclarée sur l’activité Leanback, en plus de l’application.
+- La bannière TV officielle est également déclarée sur l’activité de lancement, pour les launchers TCL qui utilisent ce niveau.
+- Ressources visuelles renommées pour éviter les anciennes références et faciliter l’actualisation de la tuile sans désinstaller l’application.
+- Identifiant Android et signature inchangés ; mise à jour compatible avec les versions officielles précédentes.
+
+
 ## 3.1.1 — Identité visuelle et protection des versions Release
 
 - Nouvelle icône de l'application inspirée de l'identité officielle JB Atomic Industries.
