@@ -1,81 +1,75 @@
 <div align="center">
 
-![JB Atomic Industries](branding/jb-atomic-industries-official.webp)
-
-![ATOMIC TV Capture](branding/atomic-tv-capture-official-logo.webp)
+![ATOMIC TV Capture — JB Atomic Industries](branding/atomic-tv-capture-banner.webp)
 
 # ATOMIC TV Capture
+### Captures d’écran, enregistrement vidéo et transfert de fichiers sur Android TV
 
-**Captures d'écran · Enregistrement vidéo · Transfert et contrôle depuis un PC**
+**Android TV / Google TV · Captures PNG · Vidéo MP4 · Interface web PC**
 
-[🇬🇧 English documentation](README.en.md) · **Éditeur : [JB Atomic Industries](https://jbatomic.com/)** · Android TV / Google TV · Version 3.1.1
+[Français](README.md) · [English](README.en.md) · [Español](README.es.md) · [Русский](README.ru.md)
+
+[**Télécharger l’APK officielle**](https://github.com/ElecktroSkwiiZz/atomic-tv-capture/releases/latest) · [Toutes les versions](https://github.com/ElecktroSkwiiZz/atomic-tv-capture/releases) · [Page du logiciel](https://jbatomic.com/atomic-tv-capture/)
 
 </div>
 
-ATOMIC TV Capture est une application Android TV destinée aux captures d'écran et à l'enregistrement vidéo du contenu affiché par le système Android. Son interface compacte s'utilise à la télécommande ; son tableau de bord web local permet de récupérer ou de gérer les fichiers depuis un PC.
+## Présentation
 
-## Identité visuelle officielle
-
-ATOMIC TV Capture est édité par **JB Atomic Industries**. L'icône de l'application reprend le monogramme « JB », l'orbite cyan et les accents métalliques de l'identité visuelle de l'éditeur, avec un symbole de capture vidéo. Le logo de l'entreprise apparaît dans l'interface Android TV et le tableau de bord local sur PC. Les interfaces comportent une signature discrète, les sources des en-têtes d'identification et les documents les mentions de l'éditeur.
-
-**Les captures d'écran et vidéos des utilisateurs ne sont jamais filigranées par défaut.** Aucun watermark ne doit être incrusté dans les fichiers exportés sans consentement et réglage explicites.
-
-- [Logo officiel JB Atomic Industries](branding/jb-atomic-industries-official.webp)
-- [Icône ATOMIC TV Capture](branding/atomic-tv-capture-official-logo.webp)
-- [Bannière Android TV](branding/atomic-tv-capture-banner.webp)
+**ATOMIC TV Capture** est une application de **capture d’écran Android TV et Google TV** développée par **JB Atomic Industries**. Elle permet de déclencher des captures avec la télécommande, d’enregistrer l’écran Android et de récupérer les fichiers directement depuis le navigateur d’un ordinateur ou d’un smartphone connecté au même réseau local.
 
 ## Fonctionnalités
 
-- **Captures PNG** : appui long sur une touche programmable ou combinaison de deux touches, via le service d'accessibilité.
-- **Enregistrement MP4** : H.264 jusqu'à 1080p / 30 FPS, sans audio. Chaque session nécessite l'autorisation système d'Android.
-- **Télécommande ou PC** : déclenchement d'une capture, demande de démarrage / arrêt de la vidéo et consultation des fichiers depuis un navigateur.
-- **Transfert local** : téléchargement individuel et ZIP en streaming ; suppression d'un fichier ou suppression totale avec confirmation.
-- **Connexion au PC** : code à 4 chiffres, limitation des tentatives, cookie de session et protection contre les requêtes intersites.
-- **Serveur local** : port configurable, tentative automatique sur un autre port si le port demandé est occupé (8766 par défaut).
-- **Mise à jour GitHub** : vérification au lancement de l'application au maximum une fois par 24 h (option désactivable), ou vérification manuelle. Téléchargement d'une APK Release et contrôle de sa signature avant confirmation d'installation.
+| Fonction | Description |
+| --- | --- |
+| **Captures PNG** | Capture via appui long ou combinaison configurable de touches de télécommande |
+| **Vidéo MP4** | Enregistrement H.264 jusqu’à 1080p / 30 FPS, **sans audio** |
+| **Contrôle depuis le navigateur** | Déclenchement et consultation depuis un PC ou téléphone sur le réseau local |
+| **Transfert de fichiers** | Téléchargement individuel ou ZIP ; gestion et suppression avec confirmation |
+| **Connexion PIN** | PIN à 4 chiffres, limitation des tentatives et contrôle de session |
+| **Port local configurable** | Port 8766 par défaut, recherche d’une alternative si nécessaire |
+| **Interface Android TV** | Navigation télécommande et langues français / anglais |
+| **Mises à jour** | APK officielles GitHub Releases avec vérification de la signature |
 
-## Installation
+## Télécharger et installer
 
-1. Télécharger l'**APK Release signée** depuis les [Releases officielles GitHub](https://github.com/ElecktroSkwiiZz/atomic-tv-capture/releases/latest).
-2. Installer l'APK sur la TV ou via ADB. Depuis le dossier qui contient `adb.exe` et l'APK :
+**Dernière version publiée : v3.1.3.** [Télécharger l’APK Android TV signée](https://github.com/ElecktroSkwiiZz/atomic-tv-capture/releases/latest).
 
-   ```powershell
-   $TV_IP = Read-Host "Adresse IP de votre Android TV (Paramètres > Réseau)"
-   .\adb connect "${TV_IP}:5555"
-   .\adb -s "${TV_IP}:5555" install -r ".\ATOMIC-TV-Capture-AndroidTV.apk"
-   ```
+1. Installez la version officielle sur **Android TV / Google TV Android 11+**.
+2. Depuis la TV, ouvrez **Paramètres → Accessibilité** et activez les raccourcis **ATOMIC TV Capture**.
+3. Dans l’application, configurez la touche ou la combinaison de capture.
+4. Pour accéder aux fichiers depuis un navigateur, relevez l’URL locale et le PIN affichés à l’écran.
+5. Ouvrez cette adresse depuis un appareil sur le **même réseau privé de confiance**.
 
-3. Sur la TV, ouvrir **Paramètres → Accessibilité**, puis activer **ATOMIC TV Capture — raccourcis télécommande**.
-4. Dans l'application, choisir la touche de capture ou la combinaison de touches, et relever l'URL ainsi que le PIN à quatre chiffres.
-5. Depuis le PC, ouvrir dans le navigateur l'adresse indiquée sur l'écran de la télévision.
+## Ce qu’ATOMIC TV Capture peut — et ne peut pas — enregistrer
 
-## Captures et limites
+- Capture du **contenu affiché par le système Android**, dans les limites des autorisations disponibles.
+- La vidéo utilise les autorisations Android de capture d’écran ; **une confirmation est nécessaire pour chaque session**.
+- Les fichiers MP4 sont **sans piste audio**.
+- Les contenus **DRM / FLAG_SECURE** peuvent apparaître noirs ou être refusés.
+- **Le signal HDMI d’une console externe** (Xbox, PlayStation, etc.) n’est généralement **pas accessible** aux API de capture Android TV.
+- Certaines touches réservées au système ne peuvent pas être interceptées.
+- Les fichiers PNG et MP4 exportés ne contiennent **aucun filigrane ajouté par défaut**.
 
-- Android 11 (API 30) minimum.
-- Les contenus protégés (DRM, `FLAG_SECURE`) peuvent être inaccessibles ou noirs.
-- Le flux HDMI d'une console externe branchée sur la TV n'est généralement pas accessible aux API Android de capture.
-- Les touches HOME, POWER et d'autres touches réservées au système ne sont pas nécessairement interceptables.
-- La vidéo ne contient pas le son ; l'autorisation de capture doit être confirmée sur la TV à chaque session.
-- Le serveur PC est **HTTP local non chiffré** : ne l'exposez jamais sur Internet et utilisez-le uniquement sur un réseau local fiable. Android peut suspendre le serveur si la TV arrête l'application.
+## Questions fréquentes
 
-## Code source et versions
+**Peut-on faire une capture d’écran Android TV sans ordinateur ?** Oui, en utilisant les raccourcis de télécommande après configuration de l’accessibilité.
 
-Pour compiler : JDK 17, Gradle 8.10.2, SDK Android 35. Commande : `gradle --no-daemon assembleDebug`.
+**Peut-on récupérer les captures sur Windows ou un smartphone ?** Oui, par le tableau de bord web local et le téléchargement des fichiers.
 
-**Identifiant Android permanent :** `com.jbatomic.tvcapture`. Ne le modifiez pas : Android s'en sert, avec la clé de signature, pour vérifier la compatibilité des mises à jour.
+**Peut-on enregistrer une console branchée en HDMI ?** Non, cette fonction n’est généralement pas possible avec les API de capture d’écran Android.
 
-**Dépôt officiel :** [`ElecktroSkwiiZz/atomic-tv-capture`](https://github.com/ElecktroSkwiiZz/atomic-tv-capture). Les nouvelles versions de l'application sont distribuées via des **GitHub Releases** publiques. Une même clé de signature doit être utilisée pour toutes les Releases.
+**Le son est-il enregistré ?** Non. La vidéo MP4 est enregistrée sans audio.
 
-➡️ **Guide complet pour publier et automatiser les mises à jour : [PUBLICATION.md](PUBLICATION.md)**.
+**Faut-il une connexion Internet ?** Le transfert web fonctionne sur le réseau local ; la recherche de mises à jour nécessite un accès à GitHub.
 
-## Mentions
+## Sécurité, publication et développement
 
-© 2026 **JB Atomic Industries** · [Site officiel](https://jbatomic.com/) · [Confidentialité](PRIVACY.md) · [Historique](CHANGELOG.md)
+Le portail utilise **HTTP local non chiffré** : ne l’utilisez que sur un réseau privé de confiance et **ne redirigez jamais son port sur Internet**.
 
-Aucune licence de redistribution/réutilisation du code n'est accordée par défaut. Définissez une licence explicite avant d'autoriser les contributions ou réutilisations tierces. N'ajoutez jamais de clés `.jks`, de mots de passe ou de fichiers privés au dépôt.
+**Application ID :** `com.jbatomic.tvcapture` · **Android :** API 30+ · **Compilation :** JDK 17, Android SDK 35 et Gradle 8.10.2 (`gradle --no-daemon assembleDebug`).
 
-## Protection du code et attribution
+[Documentation anglaise](README.en.md) · [Historique](CHANGELOG.md) · [Sécurité](SECURITY.md) · [Confidentialité](PRIVACY.md) · [Guide de publication](PUBLICATION.md) · [Copyright](COPYRIGHT.md).
 
-Les versions **Release** activent R8 (minification, optimisation et réduction des ressources). Cela complique la lecture du binaire distribué, sans rendre le code source public inaccessible ni garantir l'absence de rétro-ingénierie. Les composants Android indispensables restent conservés pour assurer l'exécution.
+[Découvrez aussi ATOMIC TV Console — commandes ADB pour Android TV](https://github.com/ElecktroSkwiiZz/atomic-tv-console).
 
-Le tableau de bord local affiche le logo et de discrets filigranes de l'éditeur, avec des en-têtes HTTP de protection, sans apposer de logo sur les captures ou les vidéos. Consultez [COPYRIGHT.md](COPYRIGHT.md) et [SECURITY.md](SECURITY.md).
+© 2026 **[JB Atomic Industries](https://jbatomic.com/atomic-tv-capture/)**. Aucune licence de redistribution ou de réutilisation du code n’est accordée par défaut.
