@@ -29,6 +29,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
+      - name: Generate readable Android TV launcher branding
+        run: |
+          python3 -m pip install --quiet --disable-pip-version-check 'Pillow==11.3.0'
+          python3 branding/render_launcher.py
       - name: Compiler une APK de test sur main
         if: github.ref == 'refs/heads/main'
         run: gradle --no-daemon --stacktrace assembleDebug
