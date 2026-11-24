@@ -49,7 +49,7 @@ jobs:
           if-no-files-found: error
 
       - name: Vérifier que le tag correspond à la version Android
-        if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: publish signed atomic-tv-capture v3.1.4')
+        if: "${{ startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: publish signed atomic-tv-capture v3.1.4 retry') }}"
         shell: bash
         run: |
           version=$(sed -nE "s/.*versionName '([^']+)'.*/\1/p" app/build.gradle | head -1)
@@ -60,7 +60,7 @@ jobs:
             exit 1
           fi
       - name: Restaurer la clé de signature (depuis GitHub Secrets)
-        if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: publish signed atomic-tv-capture v3.1.4')
+        if: "${{ startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: publish signed atomic-tv-capture v3.1.4 retry') }}"
         shell: bash
         env:
           TV_KEY_B64: ${{ secrets.TV_CAPTURE_KEYSTORE_BASE64 }}
@@ -71,7 +71,7 @@ jobs:
           [ -n "$TV_KEY_B64" ] && [ -n "$TV_PASS" ] && [ -n "$TV_KEY_PASS" ] && [ -n "$TV_ALIAS" ] || { echo 'Secrets de signature manquants'; exit 1; }
           printf '%s' "$TV_KEY_B64" | base64 --decode > "$RUNNER_TEMP/atomic-tv-capture-release.jks"
       - name: Compiler la Release officielle signée
-        if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: publish signed atomic-tv-capture v3.1.4')
+        if: "${{ startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: publish signed atomic-tv-capture v3.1.4 retry') }}"
         shell: bash
         env:
           TV_PASS: ${{ secrets.TV_CAPTURE_STORE_PASSWORD }}
@@ -93,7 +93,7 @@ jobs:
           fi
           sha256sum ATOMIC-TV-Capture-AndroidTV.apk > ATOMIC-TV-Capture-AndroidTV.apk.sha256
       - name: Publier l'APK signée dans une GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: publish signed atomic-tv-capture v3.1.4')
+        if: "${{ startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: publish signed atomic-tv-capture v3.1.4 retry') }}"
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -105,7 +105,7 @@ jobs:
             --title "ATOMIC TV Capture $TAG" \
             --generate-notes --target "$GITHUB_SHA"
       - name: Conserver une copie de l'APK signée
-        if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: publish signed atomic-tv-capture v3.1.4')
+        if: "${{ startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main' && github.event.head_commit.message == 'release: publish signed atomic-tv-capture v3.1.4 retry') }}"
         uses: actions/upload-artifact@v4
         with:
           name: ATOMIC-TV-Capture-RELEASE-SIGNED
